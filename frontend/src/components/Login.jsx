@@ -6,8 +6,12 @@ import shareVideo from '../assets/share.mp4'
 import logo from '../assets/logowhite.png'
 import { gapi } from "gapi-script";
 
+import {client} from '../client';
+
 const Login = () => {
   
+  const navigate = useNavigate();
+    
   window.gapi.load('client:auth2', () => {
     window.gapi.client.init({
         clientId: 'your client id will be display here',
@@ -15,7 +19,21 @@ const Login = () => {
     })})
   
   const responseGoogle =(response)=>{
-    console.log(response)
+    localStorage.setItem('user',JSON.stringify(response.profileObj))
+    const {name, googleId, imageUrl} = response.profileObj;
+    
+    const doc = {
+      _id:googleId,
+      _type:'user',
+      userName: name,
+      image: imageUrl,
+    }
+    
+    client.createIfNotExists(doc)
+    .then(()=>{
+      navigate('/',{replace:true})
+    })
+    
   }
   return (
     <div className="flex justify-start items-center flex-col h-screen">
