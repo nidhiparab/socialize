@@ -4,6 +4,7 @@ import {AiFillCloseCircle} from 'react-icons/ai'
 import {Route, Routes, Link} from 'react-router-dom'
 
 import {Sidebar,UserProfile} from '../components'
+import Pins from "./Pins";
 
 import {userQuery} from '../utils/data'
 import {client} from '../client'
@@ -13,8 +14,12 @@ const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false)
   const [user, setUser] = useState(null);
   
+  const scrollRef = useRef(null)
+  
+  //get user data from google
   const userInfo = localStorage.getItem('user') !== 'undefined'? JSON.parse(localStorage.getItem('user')) : localStorage().clear();
   
+  //get login data from sanity
   useEffect(() => {
     const query = userQuery(userInfo?.googleId)
     
@@ -24,20 +29,39 @@ const Home = () => {
   }, []);
   
   
+  useEffect(() => {
+    scrollRef.current.scrollTo(0,0)
+  }, []);
+  
+  
   return (
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transaction-height duration-75 ease-out">
+    
+    {/* for medium screen size */}
       <div className="hidden md:flex h-screen flex-initial">
         <Sidebar user={user && user}/>
       </div>
+      
+      
+      {/* for small screen */}
       <div className="flex md:hidden flex-row">
+        <div className="p-2 w-full flex flex-row justify-between items-center shadow-md">
+        
+        {/* menu */}
         <HiMenu fontSize={40} className="cursor-pointer" onClick={()=>setToggleSidebar(true)}/>
+        
+        {/* app logo */}
         <Link to="/">
           <img src={logo} alt="logo" className="w-28"/>
         </Link>
+        
+        {/* user profile */}
         <Link to={`user-profile/${user?._id}`}>
           <img src={user?.image} alt="logo" className="w-28"/>
         </Link>
-      </div>
+        </div>
+      
+      {/* if menu clicked toggleSidebar=true therefore second is shown */}
       {
         toggleSidebar && (
           <div className="fixed w-4/5 bg-white h-screen overflow-y-auto shadow-md z-10 animate-slide-in">
@@ -48,6 +72,14 @@ const Home = () => {
           </div>
         )
       }
+      </div>
+      
+      <div className="pb-2 flex-1 h-screen overflow-y-scroll " ref={scrollRef}>
+        <Routes>
+          <Route path="/user-profile/:userId" element={<UserProfile/>}/>
+          <Route path="/*" element={<Pins user={user && user}/>}/>
+        </Routes>
+      </div>
     </div>
   )
 }
