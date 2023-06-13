@@ -5,6 +5,8 @@ import {IoIosArrowForward} from 'react-icons/io'
 
 import logo from '../assets/logo.png';
 
+const isNotActiveStyle = 'flex items-centre px-5 gap-3 text-gray-500 hover:text-black tranisition-all duration-200 ease-in-out capitalize'
+const isActiveStyle = 'flex items-centre px-5 gap-3 font-extrabold border-r-2 border-black tranisition-all duration-200 ease-in-out capitalize'
 
 const Sidebar = ({user, closeToggle}) => {
   const handleCloseSidebar=()=>{
@@ -18,6 +20,14 @@ const Sidebar = ({user, closeToggle}) => {
          onClick={handleCloseSidebar}>
           <img src={logo} alt="logo" />
         </Link>
+        <div className="flex flex-col gap-5">
+        <NavLink
+        to="/"
+        className={({isActive})=>isActive? isActiveStyle: isNotActiveStyle}>
+        
+        </NavLink>
+        
+        </div>
       </div>
     </div>
   )
